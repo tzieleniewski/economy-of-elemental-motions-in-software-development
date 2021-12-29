@@ -5,7 +5,14 @@ SHELL := /bin/bash
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install-sdkman: ## Installs SDKMAN with OpenJDK 11, 17 and latest Maven
+git-setup: ## Sets git aliases
+	git config --global alias.br branch
+	git config --global alias.ci commit
+	git config --global alias.co checkout
+	git config --global alias.pu 'pull --all --rebase'
+	git config --global alias.st status
+
+java-setup: ## Installs SDKMAN with OpenJDK 11, 17 and latest Maven
 	curl -s "https://get.sdkman.io" | bash
 	source "/home/tkz/.sdkman/bin/sdkman-init.sh"
 	sdk install java 11.0.12-open
@@ -14,7 +21,7 @@ install-sdkman: ## Installs SDKMAN with OpenJDK 11, 17 and latest Maven
 	sdk install maven
 	sdk update
 
-upgrade-system: ## Upgrades system
+system-upgrade: ## Upgrades and clean system packages
 	sudo apt update
 	sudo apt upgrade
 	sudo apt clean
