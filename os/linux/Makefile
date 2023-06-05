@@ -69,6 +69,11 @@ setup-shell: ## Installs Oh My Zsh & Powerlevel10k
 	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
 	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
+.PHONY: setup-tools
+setup-shell: ## Installs tools
+	@echo --- $@ ---
+	sudo apt install mc; \
+
 .PHONY: system-upgrade
 system-upgrade: ## Upgrades and cleans system packages
 	@echo --- $@ ---
