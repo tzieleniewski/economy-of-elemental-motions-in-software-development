@@ -17,10 +17,11 @@ setup-docker: ## Installs Docker Engine
 .PHONY: setup-git
 setup-git: ## Configures git aliases
 	@echo --- $@ ---
-	git config --global alias.br branch; \
-	git config --global alias.ci commit; \
-	git config --global alias.co checkout; \
-	git config --global alias.pu 'pull --all --rebase'; \
+	sudo apt install -y git tig
+	git config --global alias.br branch
+	git config --global alias.ci commit
+	git config --global alias.co checkout
+	git config --global alias.pu 'pull --all --rebase'
 	git config --global alias.st status
 
 .PHONY: setup-github
@@ -34,49 +35,63 @@ setup-java: setup-java-jenv setup-java-sdkman ## Setups everything for Java
 .PHONY: setup-java-jenv
 setup-java-jenv: ## Installs jEnv
 	@echo --- $@ ---
-	git clone https://github.com/jenv/jenv.git ~/.jenv; \
-	echo 'export PATH="${HOME}/.jenv/bin:${PATH}"' >> ~/.bashrc; \
-	echo 'eval "$(jenv init -)"' >> ~/.bashrc; \
-	echo 'export PATH="${HOME}/.jenv/bin:${PATH}"' >> ~/.zshrc; \
-    echo 'eval "$(jenv init -)"' >> ~/.zshrc
+	git clone https://github.com/jenv/jenv.git ~/.jenv
+	echo 'export PATH="${HOME}/.jenv/bin:${PATH}"' >> ~/.bashrc
+	echo 'eval "$(jenv init -)"' >> ~/.bashrc
+	echo 'export PATH="${HOME}/.jenv/bin:${PATH}"' >> ~/.zshrc
+	echo 'eval "$(jenv init -)"' >> ~/.zshrc
+
+.PHONY: setup-java-jetbrains
+setup-java-jetbrains: ## Installs Jetbrains Toolbox
+	@echo --- $@ ---
+	brew install --cask jetbrains-toolbox
 
 .PHONY: setup-java-sdkman
 setup-java-sdkman: ## Installs SDKMAN with OpenJDK 11, 17 and latest Maven
 	@echo --- $@ ---
-	curl -s "https://get.sdkman.io" | bash; \
-	source "/home/tkz/.sdkman/bin/sdkman-init.sh"; \
-	sdk selfupdate; \
-	sdk install java 17.0.7-tem; \
-	rm ~/.sdkman/candidates/java/current; \
+	curl -s "https://get.sdkman.io" | bash
+	source "/home/tkz/.sdkman/bin/sdkman-init.sh"
+	sdk selfupdate
+	sdk install java 17.0.7-tem
+	rm ~/.sdkman/candidates/java/current
 	sdk update
 
 .PHONY: setup-k8s
 setup-k8s: ## Installs kubectl, k9s, krew & Rancher Desktop
 	@echo --- $@ ---
-	curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg; \
-	echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list; \
-	sudo apt-get update; \
-    sudo apt-get install -y kubectl; \
-    k krew install ctx; \
-    k krew install ns; \
+	curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+	echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+	sudo apt-get update
+	sudo apt-get install -y kubectl
+	k krew install ctx
+	k krew install ns
 #	k9s
 #	rancher
 
 .PHONY: setup-shell
 setup-shell: ## Installs Oh My Zsh & Powerlevel10k
 	@echo --- $@ ---
-	sudo apt install fzf; \
-	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
+	sudo apt install -y fzf
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
 .PHONY: setup-tools
-setup-shell: ## Installs tools
+setup-tools: ## Installs tools
 	@echo --- $@ ---
-	sudo apt install mc; \
+	sudo apt install -y \
+	apt-transport-https \
+	btop \
+	curl \
+	imagemagick \
+	nmap \
+	mc \
+	software-properties-common \
+	tldr \
+	zsh
 
 .PHONY: system-upgrade
 system-upgrade: ## Upgrades and cleans system packages
 	@echo --- $@ ---
 	sudo apt update
-	sudo apt upgrade
+	sudo apt upgrade -y
 	sudo apt clean
